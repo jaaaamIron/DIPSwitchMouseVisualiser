@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ryan Gander Mouse - DIP Switch Interactive Reference</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f0f0;
+            line-height: 1.4;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .interactive-section {
+            background: #e8f5e8;
+            border: 3px solid #27ae60;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .interactive-title {
+            color: #27ae60;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .switch-diagram {
+            background: white;
+            border: 2px solid #34495e;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .switch-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .position {
+            width: 60px;
+            text-align: center;
+            font-weight: bold;
+            background: #ecf0f1;
+            padding: 5px;
+            border: 1px solid #bdc3c7;
+        }
+        .switch-visual {
+            width: 50px;
+            height: 25px;
+            margin: 0 15px;
+            border: 3px solid #34495e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 11px;
+            color: white;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .switch-visual:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .switch-on {
+            background: #e74c3c;
+            border-color: #c0392b;
+        }
+        .switch-off {
+            background: #95a5a6;
+            border-color: #7f8c8d;
+        }
+        .function {
+            flex: 1;
+            padding-left: 10px;
+        }
+        .current-config {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .config-title {
+            font-weight: bold;
+            color: #856404;
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .config-result {
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #ffc107;
+        }
+        .config-line {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .config-label {
+            font-weight: bold;
+        }
+        .config-value {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .mode-section {
+            background: white;
+            border: 2px solid #27ae60;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .mode-title {
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .table th, .table td {
+            border: 1px solid #bdc3c7;
+            padding: 8px;
+            text-align: center;
+        }
+        .table th {
+            background: #34495e;
+            color: white;
+        }
+        .on {
+            background: #e74c3c;
+            color: white;
+            font-weight: bold;
+        }
+        .off {
+            background: #95a5a6;
+            color: white;
+            font-weight: bold;
+        }
+        .playlist-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .playlist-option {
+            border: 1px solid #bdc3c7;
+            padding: 10px;
+            text-align: center;
+            background: #ecf0f1;
+        }
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 15px;
+            color: #856404;
+        }
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .preset-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+        .preset-btn:hover {
+            background: #2980b9;
+        }
+        .reset-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .reset-btn:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Ryan Gander Mouse Controller</h1>
+        <h2>Interactive DIP Switch Configuration</h2>
+        <p><strong>Click switches to toggle ON/OFF</strong></p>
+    </div>
+
+    <div class="interactive-section">
+        <div class="interactive-title">🎛️ INTERACTIVE DIP SWITCH SIMULATOR</div>
+        <div class="switch-diagram">
+            <div class="switch-row">
+                <div class="position">POS 1</div>
+                <div class="switch-visual switch-off" id="switch-0" onclick="toggleSwitch(0)">OFF</div>
+                <div class="function"><strong>MODE:</strong> OFF = Linear Mode | ON = Time Mode</div>
+            </div>
+            <div class="switch-row">
+                <div class="position">POS 2</div>
+                <div class="switch-visual switch-off" id="switch-1" onclick="toggleSwitch(1)">OFF</div>
+                <div class="function"><strong>DUAL FUNCTION:</strong> Time Mode = Interval Bit 0 | Linear Mode = Random Playback</div>
+            </div>
+            <div class="switch-row">
+                <div class="position">POS 3</div>
+                <div class="switch-visual switch-off" id="switch-2" onclick="toggleSwitch(2)">OFF</div>
+                <div class="function"><strong>DUAL FUNCTION:</strong> Time Mode = Interval Bit 1 | Linear Mode = Loop Enable</div>
+            </div>
+            <div class="switch-row">
+                <div class="position">POS 4</div>
+                <div class="switch-visual switch-off" id="switch-3" onclick="toggleSwitch(3)">OFF</div>
+                <div class="function"><strong>PLAYLIST:</strong> Selection Bit 0 (Both Modes)</div>
+            </div>
+            <div class="switch-row">
+                <div class="position">POS 5</div>
+                <div class="switch-visual switch-off" id="switch-4" onclick="toggleSwitch(4)">OFF</div>
+                <div class="function"><strong>PLAYLIST:</strong> Selection Bit 1 (Both Modes)</div>
+            </div>
+            <div class="switch-row">
+                <div class="position">POS 6</div>
+                <div class="switch-visual switch-off" id="switch-5" onclick="toggleSwitch(5)">OFF</div>
+                <div class="function"><strong>RESERVED:</strong> Not used (leave OFF)</div>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <button class="reset-btn" onclick="resetAllSwitches()">Reset All Switches</button>
+        </div>
+
+        <div class="preset-buttons">
+            <button class="preset-btn" onclick="setPreset([0,0,1,0,0,0])">Linear: Sequential, Loop, Playlist 1</button>
+            <button class="preset-btn" onclick="setPreset([0,1,1,1,0,0])">Linear: Random, Loop, Playlist 2</button>
+            <button class="preset-btn" onclick="setPreset([0,1,0,0,1,0])">Linear: Random, Once, Playlist 3</button>
+            <button class="preset-btn" onclick="setPreset([1,0,0,0,0,0])">Time: Every 15min, Playlist 1</button>
+            <button class="preset-btn" onclick="setPreset([1,1,0,0,0,0])">Time: Every 30min, Playlist 1</button>
+            <button class="preset-btn" onclick="setPreset([1,0,1,1,1,0])">Time: Every Hour, Playlist 4</button>
+        </div>
+    </div>
+
+    <div class="current-config">
+        <div class="config-title">📋 CURRENT CONFIGURATION</div>
+        <div class="config-result" id="config-display">
+            <div class="config-line">
+                <span class="config-label">Operating Mode:</span>
+                <span class="config-value" id="mode-display">Linear Mode</span>
+            </div>
+            <div class="config-line">
+                <span class="config-label">Playlist:</span>
+                <span class="config-value" id="playlist-display">Playlist 1</span>
+            </div>
+            <div class="config-line" id="linear-options">
+                <span class="config-label">Linear Settings:</span>
+                <span class="config-value" id="linear-display">Sequential, No Loop</span>
+            </div>
+            <div class="config-line" id="time-options" style="display: none;">
+                <span class="config-label">Time Interval:</span>
+                <span class="config-value" id="time-display">Every 15 minutes</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mode-section">
+        <div class="mode-title">🔄 LINEAR MODE (Position 1 = OFF)</div>
+        <p><strong>Continuous playback with configurable options</strong></p>
+        
+        <table class="table">
+            <tr>
+                <th>Setting</th>
+                <th>Position 2</th>
+                <th>Position 3</th>
+                <th>Result</th>
+            </tr>
+            <tr>
+                <td>Sequential + Loop</td>
+                <td class="off">OFF</td>
+                <td class="on">ON</td>
+                <td>Plays playlist in order, repeats forever</td>
+            </tr>
+            <tr>
+                <td>Sequential + Once</td>
+                <td class="off">OFF</td>
+                <td class="off">OFF</td>
+                <td>Plays playlist in order, stops after one cycle</td>
+            </tr>
+            <tr>
+                <td>Random + Loop</td>
+                <td class="on">ON</td>
+                <td class="on">ON</td>
+                <td>Shuffles order each cycle, repeats forever</td>
+            </tr>
+            <tr>
+                <td>Random + Once</td>
+                <td class="on">ON</td>
+                <td class="off">OFF</td>
+                <td>Shuffles order, plays once, stops</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="mode-section">
+        <div class="mode-title">⏰ TIME MODE (Position 1 = ON)</div>
+        <p><strong>Scheduled playback based on real-time clock</strong></p>
+        
+        <table class="table">
+            <tr>
+                <th>Interval</th>
+                <th>Position 2</th>
+                <th>Position 3</th>
+                <th>Plays At</th>
+            </tr>
+            <tr>
+                <td>Every 15 minutes</td>
+                <td class="off">OFF</td>
+                <td class="off">OFF</td>
+                <td>:00, :15, :30, :45</td>
+            </tr>
+            <tr>
+                <td>Every 30 minutes</td>
+                <td class="on">ON</td>
+                <td class="off">OFF</td>
+                <td>:00, :30</td>
+            </tr>
+            <tr>
+                <td>Every hour</td>
+                <td class="off">OFF</td>
+                <td class="on">ON</td>
+                <td>:00 only</td>
+            </tr>
+            <tr>
+                <td>Every hour (alt)</td>
+                <td class="on">ON</td>
+                <td class="on">ON</td>
+                <td>:00 only (same as above)</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="mode-section">
+        <div class="mode-title">📁 PLAYLIST SELECTION (Both Modes)</div>
+        <p><strong>Choose which sequence to play (Positions 4 & 5)</strong></p>
+        
+        <div class="playlist-grid">
+            <div class="playlist-option">
+                <strong>Playlist 1</strong><br>
+                Pos 4: <span class="off">OFF</span> | Pos 5: <span class="off">OFF</span><br>
+                <em>playSequence1[]</em>
+            </div>
+            <div class="playlist-option">
+                <strong>Playlist 2</strong><br>
+                Pos 4: <span class="on">ON</span> | Pos 5: <span class="off">OFF</span><br>
+                <em>playSequence2[]</em>
+            </div>
+            <div class="playlist-option">
+                <strong>Playlist 3</strong><br>
+                Pos 4: <span class="off">OFF</span> | Pos 5: <span class="on">ON</span><br>
+                <em>playSequence3[]</em>
+            </div>
+            <div class="playlist-option">
+                <strong>Playlist 4</strong><br>
+                Pos 4: <span class="on">ON</span> | Pos 5: <span class="on">ON</span><br>
+                <em>playSequence4[]</em>
+            </div>
+        </div>
+    </div>
+
+    <div class="note">
+        <h4>⚠️ Important Notes:</h4>
+        <ul>
+            <li><strong>Power Cycle Required:</strong> DIP switch settings are only read at startup</li>
+            <li><strong>Mode Selection:</strong> Set operationMode = 3 in code to enable DIP switch control</li>
+            <li><strong>Fallback:</strong> If DIP switch fails, system defaults to Linear mode</li>
+            <li><strong>Time Mode:</strong> Requires working RTC (Real-Time Clock)</li>
+            <li><strong>Position 6:</strong> Reserved for future features, leave OFF</li>
+        </ul>
+    </div>
+
+    <script>
+        // Array to track switch states (0 = OFF, 1 = ON)
+        let switchStates = [0, 0, 0, 0, 0, 0];
+
+        function toggleSwitch(index) {
+            switchStates[index] = switchStates[index] === 0 ? 1 : 0;
+            updateSwitchDisplay(index);
+            updateConfiguration();
+        }
+
+        function updateSwitchDisplay(index) {
+            const switchElement = document.getElementById(`switch-${index}`);
+            if (switchStates[index] === 1) {
+                switchElement.className = 'switch-visual switch-on';
+                switchElement.textContent = 'ON';
+            } else {
+                switchElement.className = 'switch-visual switch-off';
+                switchElement.textContent = 'OFF';
+            }
+        }
+
+        function updateConfiguration() {
+            // Determine mode
+            const isTimeMode = switchStates[0] === 1;
+            const playlist = (switchStates[4] * 2) + switchStates[3] + 1; // Convert binary to 1-4
+
+            document.getElementById('mode-display').textContent = isTimeMode ? 'Time Mode' : 'Linear Mode';
+            document.getElementById('playlist-display').textContent = `Playlist ${playlist}`;
+
+            if (isTimeMode) {
+                // Time mode settings
+                document.getElementById('linear-options').style.display = 'none';
+                document.getElementById('time-options').style.display = 'flex';
+                
+                const timeInterval = (switchStates[2] * 2) + switchStates[1]; // Convert binary
+                let intervalText;
+                switch (timeInterval) {
+                    case 0: intervalText = 'Every 15 minutes (:00, :15, :30, :45)'; break;
+                    case 1: intervalText = 'Every 30 minutes (:00, :30)'; break;
+                    case 2:
+                    case 3: intervalText = 'Every hour (:00 only)'; break;
+                }
+                document.getElementById('time-display').textContent = intervalText;
+            } else {
+                // Linear mode settings
+                document.getElementById('linear-options').style.display = 'flex';
+                document.getElementById('time-options').style.display = 'none';
+                
+                const random = switchStates[1] === 1;
+                const loop = switchStates[2] === 1;
+                
+                let linearText = random ? 'Random' : 'Sequential';
+                linearText += loop ? ', Loop' : ', Play Once';
+                
+                document.getElementById('linear-display').textContent = linearText;
+            }
+        }
+
+        function resetAllSwitches() {
+            switchStates = [0, 0, 0, 0, 0, 0];
+            for (let i = 0; i < 6; i++) {
+                updateSwitchDisplay(i);
+            }
+            updateConfiguration();
+        }
+
+        function setPreset(preset) {
+            switchStates = [...preset];
+            for (let i = 0; i < 6; i++) {
+                updateSwitchDisplay(i);
+            }
+            updateConfiguration();
+        }
+
+        // Initialize display
+        updateConfiguration();
+    </script>
+</body>
+</html>
